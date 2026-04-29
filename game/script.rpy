@@ -35,7 +35,7 @@ label start:
 
     scene bg garden
     $ selected_bgm = random.choice(bgm_tracks)
-    play music "audio/[selected_bgm]" fadein 1.0 loop
+    $ renpy.music.play("audio/" + selected_bgm, loop=True, fadein=1.0)
 
     $ beetle_trust = 0
     $ gary_helped  = False
