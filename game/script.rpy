@@ -34,8 +34,7 @@ define cecil_secret   = False
 label start:
 
     scene bg garden
-    $ selected_bgm = random.choice(bgm_tracks)
-    $ renpy.music.play("audio/" + selected_bgm, loop=True, fadein=1.0)
+    play music [ "audio/EverythingEverything.mp3", "audio/Slingshot.mp3", "audio/Pox.mp3" ]
 
     $ beetle_trust = 0
     $ gary_helped  = False
