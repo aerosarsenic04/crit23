@@ -1,9 +1,9 @@
 init python:
     import random
     bgm_tracks = [
-        "Everything.mp3",
-        "Slingshot.mp3",
-        "Pox.mp3",
+        "First Rate Town INST.wav",
+        "Orbit INST.wav",
+        "Osmosis INST.wav",
     ]
 
 define s  = Character("[player_name]",   color="#c8e6c9")
@@ -34,7 +34,8 @@ define cecil_secret   = False
 label start:
 
     scene bg garden
-    play music [ "audio/EverythingEverything.mp3", "audio/Slingshot.mp3", "audio/Pox.mp3" ]
+    $ selected_bgm = random.choice(bgm_tracks)
+    $ renpy.music.play("audio/" + selected_bgm, loop=True, fadein=1.0)
 
     $ beetle_trust = 0
     $ gary_helped  = False
