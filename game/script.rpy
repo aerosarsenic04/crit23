@@ -1,7 +1,7 @@
 init python:
     import random
     bgm_tracks = [
-        "Everything Everything.mp3",
+        "Everything.mp3",
         "Slingshot.mp3",
         "Pox.mp3",
     ]
