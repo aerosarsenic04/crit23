@@ -1,28 +1,48 @@
-﻿
-define s  = Character("Snail",   color="#c8e6c9")
+init python:
+    import random
+    bgm_tracks = [
+        "Everything Everything.mp3",
+        "Slingshot.mp3",
+        "Pox.mp3",
+    ]
+
+define s  = Character("[player_name]",   color="#c8e6c9")
 define b  = Character("Beetle",  color="#8d6e63")
 define g  = Character("Gary",    color="#a5d6a7")
 define c  = Character("Cecil",   color="#ce93d8")
 define n  = Character("Narrator",color="#ffffff")
 
+default persistent.ending1_seen    = False
+default persistent.ending2_seen    = False
+default persistent.ending3_seen    = False
+default persistent.secret_unlocked = False
+
 image snail  = "snail.png"
 image beetle = "beetle.png"
 image gary   = "gary.png"
-image cecil  = "cecil.png"
+image cecil = im.Scale("cecil.png", 800, 1200)
 
-define beetle_trust   = 0   # how much snail trusts beetle
+image bg garden       = im.Scale("garden.jpg", 1920, 1080)
+image bg garden path  = im.Scale("gardenpath.jpg", 1920, 1080)
+image bg garden log   = im.Scale("gardenlog.png", 1920, 1080)
+image bg garden deep  = im.Scale("gardendeep.jpg", 1920, 1080)
+
+define beetle_trust   = 0   # sanil trust in beetle oooh yes
 define gary_helped    = False
 define cecil_secret   = False
-
 
 label start:
 
     scene bg garden
+    $ selected_bgm = random.choice(bgm_tracks)
+    play music "audio/[selected_bgm]" fadein 1.0 loop
 
     $ beetle_trust = 0
     $ gary_helped  = False
     $ cecil_secret = False
-
+    "Before we begin, what's yer name?"
+    $ player_name = renpy.input("whats yer name?", length=67)
+    $ player_name = player_name.strip() or "snail"
     "It's a perfectly normal Tuesday in the garden."
     "The sun is shining. The dirt is dirty. Life is good."
 
@@ -127,7 +147,6 @@ label scene1_askfirst:
     jump scene1_emergency
 
 
-
 label scene1_emergency:
 
     b "so."
@@ -147,7 +166,7 @@ label scene1_emergency:
 
     "A single raindrop falls dramatically."
     "Then stops, because it isn't actually raining."
-    "The atmosphere was just trying it s   b"eAslts.o" like compost, which is a strang
+    "The atmosphere was just trying its best."
 
     s "THE COMPOST PILE."
     b "I KNOW."
@@ -359,7 +378,6 @@ label scene2_beetlesaw:
 
     jump scene3_gary_visit
 
-
 label scene3_gary_visit:
 
     scene bg garden log
@@ -517,8 +535,6 @@ label scene3_gary_end:
         "Check the pine tree area for more evidence before confronting anyone.":
             jump scene4_evidence
 
-
-
 label scene4_plan:
 
     scene bg garden path
@@ -587,6 +603,584 @@ label scene4_evidence:
 
     "They make their way to the pine tree area."
     "It does smell like pine needles."
- 
+    "Also like compost, which is a strange combination."
 
+    b "okay so."
+    b "definite evidence of dragging."
+    s "yes."
+    b "and there's my pine needle from before."
+    s "and look."
+
+    "The snail points at something with great gravity."
+    "It is a very small button."
+
+    b "..."
+    b "is that your button."
+    s "that is MY button."
+    s "from my diary bag."
+    b "..."
+    b "case closed basically."
+    s "case closed."
+
+    $ beetle_trust += 1
+
+    "A rustling in the pine needles."
+    "They both freeze."
+
+    show cecil at right with moveinright
+
+    c "oh."
+    c "..."
+    c "hello."
+
+    s "Cecil."
+    c "Snail."
+    c "and... beetle."
+    b "hi."
+    c "..."
+    c "I can explain."
+
+    jump scene4_confront_midscene
+
+
+label scene4_confront_direct:
+    jump scene4_confront_walk
+
+
+label scene4_confront_walk:
+
+    scene bg garden deep
+
+    show snail at left
+    show beetle at right
+
+    "The far side of the garden is quieter."
+    "The pine trees make everything smell sharp and clean."
+    "It's actually quite nice over here."
+    "The snail makes a mental note about this."
+
+    b "so what's the approach."
+    s "we knock."
+    b "on what."
+    s "Cecil has a log."
+    s "everyone has a log."
+    b "I don't have a log."
+    s "you should get a log."
+    b "is this going to be a whole thing."
+    s "no."
+    s "here we are."
+
+    show cecil at center with moveinright
+
+    c "oh."
+    c "visitors."
+    c "how... unexpected."
+    s "hello Cecil."
+    c "Snail."
+    c "and you brought a beetle."
+    b "Beetle."
+    c "how creative."
+    b "says Cecil the centipede."
+    c "touché."
+
+    jump scene4_confront_main
+
+
+label scene4_confront_midscene:
+
+    "Cecil is already here."
+    "This is either very convenient or very suspicious."
+    "Probably both."
+
+    jump scene4_confront_main
+
+
+label scene4_confront_main:
+
+    s "Cecil."
+    s "where is my compost pile."
+    c "I don't know what you're talking about."
+    s "Cecil."
+    c "..."
+    s "Gary told us."
+    c "Gary is a coward and a gossip."
+    b "so you know Gary."
+    c "everyone knows Gary."
+    b "you didn't deny the gossip part."
+    c "..."
+
+    menu:
+        "Stay calm. Give Cecil a chance to explain.":
+            $ beetle_trust += 1
+            jump scene5_calm
+        "Tell Cecil about the diary specifically.":
+            jump scene5_diary
+        "Ask Cecil why. Not what happened - why.":
+            $ cecil_secret = True
+            jump scene5_why
+        "Let the beetle take the lead on this one.":
+            jump scene5_beetle_leads
+
+
+label scene5_calm:
+
+    s "Cecil."
+    s "I'm not angry."
+    c "..."
+    s "I'm confused."
+    s "and I would like my things back."
+    s "but I'm not angry."
+    c "..."
+    c "you should be angry."
+    s "probably."
+    s "but I'm a snail."
+    s "anger takes a lot of energy."
+    c "..."
+
+    "Cecil looks at its feet."
+    "All of them."
+    "This takes a moment."
+
+    c "I took it."
+    c "I needed the compost."
+    c "for my side of the garden."
+    c "nothing grows over here."
+    s "..."
+    s "Cecil."
+    s "you could have asked."
+    c "..."
+    c "I didn't think you'd say yes."
+    s "why not."
+    c "..."
+
+    jump scene5_the_truth
+
+
+label scene5_diary:
+
+    b "there was a diary in there."
+    c "..."
+    b "a personal diary."
+    b "with private thoughts in it."
+    c "I didn't read it."
+    b "you have it though."
+    c "..."
+    c "I have it."
+    c "I didn't read it."
+    c "I found it when I was going through the compost."
+    c "I put it aside."
+    c "I was going to return it."
+    s "..."
+    s "Cecil."
+    c "I'm not a monster."
+    s "I know."
+    c "I just needed the compost."
+    c "nothing grows here."
+    c "I thought maybe if I had better soil..."
+    s "..."
+
+    jump scene5_the_truth
+
+
+label scene5_why:
+
+    s "Cecil."
+    s "why."
+    c "..."
+    c "what do you mean why."
+    s "you could have just asked."
+    s "you know where I live."
+    s "you pass my rock every day."
+    c "..."
+    c "you noticed that."
+    s "I notice things."
+    s "I'm a snail."
+    s "I have a lot of time to notice things."
+    c "..."
+
+    "Cecil is quiet for a long time."
+
+    c "I didn't think you'd want to talk to me."
+    s "why not."
+    c "..."
+    c "I'm a lot."
+    c "I have a hundred legs."
+    c "I trip over things."
+    c "I'm not very..."
+    c "easy."
+    s "..."
+    s "Cecil."
+    c "yeah."
+    s "I have been staring at the same rock for three years."
+    s "I am also not very easy."
+    c "..."
+    c "huh."
+
+    $ beetle_trust += 1
+    $ cecil_secret = True
+    jump scene5_the_truth
+
+
+label scene5_beetle_leads:
+
+    "The snail steps back."
+    "The beetle steps forward."
+    "The beetle seems surprised by this."
+    "But also rises to the occasion."
+
+    b "okay Cecil."
+    b "look."
+    b "we're not here to cause trouble."
+    b "we just want to understand what happened."
+    b "and get the stuff back."
+    b "and then maybe everyone can just... move on."
+    c "..."
+    c "that simple?"
+    b "that simple."
+    c "..."
+
+    "Cecil looks at the beetle."
+    "Then at the snail."
+    "The snail nods very slightly."
+
+    c "I needed the compost."
+    c "for my garden."
+    c "nothing grows on this side of the fence."
+
+    b "..."
+    b "you have a garden?"
+    c "I'm trying to."
+    c "it's not going very well."
+
+    $ beetle_trust += 2
+    jump scene5_the_truth
+
+
+label scene5_the_truth:
+
+    "A pause settles over everything."
+    "The pine trees are very still."
+
+    b "wait."
+    b "so you took an entire compost pile."
+    b "to try to grow a garden."
+    c "yes."
+    b "..."
+    b "over here."
+    b "where it's very shady."
+    c "..."
+    c "yes."
+    b "Cecil that's not going to work."
+    c "I know that NOW."
+    s "what were you trying to grow."
+    c "..."
+    c "flowers."
+    s "..."
+    b "..."
+    c "I just thought."
+    c "if there were flowers here."
+    c "it would be nicer."
+    c "over here."
+    s "Cecil."
+    c "yeah."
+    s "why do you want it to be nicer over here."
+
+    "Cecil looks at its feet again."
+
+    c "..."
+    c "it gets lonely."
+    c "over here."
+    c "nobody really comes to this side."
+
+    "A very long pause."
+
+    if cecil_secret == True:
+        "The snail does not look surprised."
     
+    if beetle_trust >= 4:
+        "The beetle sits down on a pine needle, thinking."
+        "The snail watches the beetle."
+        "Something is happening in the beetle's expression."
+        "The snail files this away."
+
+    menu:
+        "Tell Cecil they can just have some compost. Properly this time.":
+            jump ending1_justice
+        "Ask Cecil if they want company. The real question.":
+            jump ending2_everyone_lonely
+        "Look at the beetle. Really look at them.":
+            jump ending3_beetle
+        
+        "Ask Cecil to show you the garden they're trying to grow.":
+            jump ending2_everyone_lonely
+
+
+
+label ending1_justice:
+
+    s "Cecil."
+    s "give it back."
+    s "all of it."
+    c "..."
+    c "fine."
+
+    "Cecil produces the diary."
+    "And the button."
+    "And the pebble."
+    "And the dried moss."
+    "And approximately forty percent of the compost pile."
+    "The beetle makes seven trips."
+
+    b "okay I think that's everything."
+    s "..."
+    s "this is more than I started with."
+    c "I added to it."
+    c "I felt bad."
+    s "...Cecil."
+    c "what."
+    s "did you want some of the compost."
+    s "you could have just asked."
+    c "..."
+    b "yeah we're pretty chill about compost."
+    c "I didn't know that."
+    s "now you know."
+
+    "Cecil gets some compost."
+    "A real amount. A generous amount."
+    "The snail helps Cecil figure out which spot in the garden actually gets enough light."
+    "It is not this spot."
+    "They relocate the whole operation to a better patch."
+    "The beetle helps dig, because the beetle is like that apparently."
+    "By the end of the afternoon something resembling a garden bed exists."
+    "It is small and the soil is lumpy."
+    "It is a start."
+
+    c "..."
+    c "thank you."
+    s "don't mention it."
+    b "mention it a little."
+    s "mention it a normal amount."
+    c "..."
+    c "thank you a normal amount."
+
+    "The snail gets their diary back."
+    "The beetle gets nothing material but feels very good about the whole situation."
+    "The rock is still out there."
+    "Being a rock."
+    "Everything is fine."
+
+    "THE END."
+    "ENDING 1: JUSTICE IS SERVED (QUESTIONABLY)"
+    "The garden is slightly better than it was this morning."
+    "That's fun, lol"
+    $ persistent.ending1_seen = True
+    jump check_secret_unlock
+
+
+label ending2_everyone_lonely:
+
+    s "Cecil."
+    s "do you want company."
+    c "..."
+    c "what?"
+    s "over here."
+    s "on this side of the garden."
+    s "do you want someone to come over sometimes."
+    c "..."
+    c "I."
+    c "yes."
+    c "but I didn't think anyone would want to."
+    s "why not."
+    c "nobody ever comes here."
+    b "because nobody knew it was here."
+    c "..."
+    b "I didn't know this side of the garden existed."
+    b "I've been flying over it for a whole season."
+    b "I just never came down."
+    c "..."
+    c "oh."
+    b "yeah."
+
+    "A very long pause."
+    "The pine trees drop a few needles, gently."
+
+    s "Cecil."
+    s "return my things."
+    s "and we'll come back tomorrow."
+    c "..."
+    c "why."
+    s "because you wanted flowers and you have bad soil placement."
+    s "and I know where the good light is."
+    s "and the beetle can dig faster than either of us."
+    b "I do dig very fast."
+    c "..."
+    c "just like that."
+    s "just like that."
+
+    "Cecil returns everything."
+    "All of it, including the button, which Cecil had polished."
+    "The snail doesn't mention this."
+    "But notes it."
+
+    "They come back the next day."
+    "And the day after that."
+    "The garden on the shady side of the fence is relocated to a better spot."
+    "Eventually something actually grows."
+    "It's not much."
+    "But Cecil tends to it every morning."
+    "And sometimes there are visitors."
+
+    "THE END."
+    "ENDING 2: NOBODY WAS OKAY AND THAT WAS THE THING THEY HAD IN COMMON LMAO"
+    "the flowers are doing fine, actually."
+
+    $ persistent.ending2_seen = True
+    jump check_secret_unlock
+
+
+label ending3_beetle:
+
+    "The snail looks at the beetle."
+    "Really looks."
+    "The beetle is looking at Cecil."
+    "The beetle's expression is very complicated."
+    "Something is clicking into place."
+
+    s "beetle."
+    b "yeah."
+    s "is there something you want to say."
+    b "..."
+    b "no."
+    s "beetle."
+    b "..."
+
+    "Cecil looks between them."
+    "Cecil decides to go check on the compost pile situation."
+    "Cecil is perceptive like that."
+
+    hide cecil with moveoutright
+
+    "They are alone."
+
+    b "..."
+    s "."
+    b "okay."
+    b "okay so."
+    b "there wasn't really an emergency."
+    s "I know."
+    b "the compost pile is gone that part is true."
+    s "I know."
+    b "but I."
+    b "I fly past your rock a lot."
+    b "like. a lot."
+    b "and you're always just."
+    b "looking at stuff."
+    b "and you seem really into it."
+    b "and I just."
+    b "I wasn't into anything."
+    b "and I thought if I said there was an emergency you'd come with me."
+    b "and we'd just."
+    b "walk around."
+    b "and look at stuff."
+    b "together."
+
+    "A very long silence."
+
+    s "..."
+    b "I'm sorry."
+    s "..."
+    s "beetle."
+    b "yeah."
+    s "you can just ask."
+    b "..."
+    b "really."
+    s "I would say yes."
+    b "..."
+    b "how do you know."
+    s "because you walked the whole way here."
+    s "even though you can fly."
+    b "..."
+    b "I."
+    b "yeah."
+
+    "The beetle looks at the ground."
+    "The snail looks at the beetle."
+    "A pine needle falls between them."
+
+    s "that was kind."
+    b "I'm a kind beetle."
+    s "I know."
+
+    "Cecil comes back."
+    "Cecil has retrieved the diary and the button and the pebble and the moss."
+    "Cecil holds them out, all of them, without being asked."
+    "Cecil says nothing."
+    "The snail takes them."
+
+    s "thank you Cecil."
+    c "..."
+    c "sorry about the compost pile."
+    s "we'll sort it out."
+    c "okay."
+
+    "And somehow they all end up sitting on the pine needle side of the garden."
+    "As the sun gets lower."
+    "Nobody planned this."
+    "It just happened."
+
+    b "hey."
+    s "yeah."
+    b "same time tomorrow?"
+    s "..."
+    s "I'll be by my rock."
+    b "okay."
+    s "you know where it is."
+    b "I do."
+    s "good."
+
+    "The fireflies come out."
+    "The snail watches them."
+    "The beetle watches the snail watch them."
+    "Cecil watches both of them and says nothing and this is its own kind of happiness."
+
+    "THE END."
+    "ENDING 3: BEETLE IS JS A LIL GUY"
+    "and honestly same."
+    "thanks for playing critterbeats :)"
+
+    $ persistent.ending3_seen = True
+    jump check_secret_unlock
+
+label check_secret_unlock:
+
+    if persistent.ending1_seen and persistent.ending2_seen and persistent.ending3_seen and not persistent.secret_unlocked:
+        $ persistent.secret_unlocked = True
+        "..."
+        "hey."
+        "you're still here."
+        "you've seen all of it, haven't you."
+        "every ending. every choice."
+        "you watched the snail stare at rocks."
+        "you watched the beetle walk when it could fly."
+        "you watched Cecil polish a button for someone who didn't know."
+        "..."
+        "there's one more thing."
+        "the rock the snail was staring at at the beginning?"
+        "the beetle put it there."
+        "three weeks ago."
+        "thought it was a good rock."
+        "thought maybe the snail would like it."
+        "left it and flew away before anyone could see."
+        "..."
+        "that's all. that's the secret."
+        "go outside. notice something."
+        "SECRET ENDING: THE ROCK"
+        "you found it :)"
+    else:
+        if not persistent.ending1_seen or not persistent.ending2_seen or not persistent.ending3_seen:
+            "..."
+            "there might be more to find."
+            "just saying."
+
+    return
+
