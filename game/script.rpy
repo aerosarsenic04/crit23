@@ -56,7 +56,7 @@ label start:
     s "..."
     s "incredible."
 
-    "A beetle lands nearby with the grace of a garbage truck."
+    "A beetle lands nearby  with the grace of a garbage truck."
 
     show beetle at right with moveinright
 
